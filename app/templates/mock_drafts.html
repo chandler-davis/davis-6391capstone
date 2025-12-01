@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>WNBA Mock Drafts</h1>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMockDraftModal">
+        Create New Mock Draft
+    </button>
+
+    <!-- Table displaying all mock drafts -->
+    <table class="table table-striped mt-4">
+        <thead>
+            <tr>
+                <th>Mock Draft ID</th>
+                <th>Draft Name</th>
+                <th>Created By</th>
+                <th>User Role</th>
+                <th>Picks</th>
+                <th>Created Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for draft in all_mock_drafts %}
+            <tr>
+                <td>{{ draft[0] }}</td>
+                <td>{{ draft[1] }}</td>
+                <td>
+                    {{ draft[4] }}
+                    <small class="text-muted d-block">{{ draft[5] }}</small>
+                </td>
+                <td>
+                    <span class="badge bg-{% if draft[6] == 'admin' %}danger{% elif draft[6] == 'scout' %}warning{% else %}secondary{% endif %}">
+                        {{ draft[6].title() }}
+                    </span>
+                </td>
+                <td>
+                    <span class="badge bg-info">{{ draft[7] }} pick(s)</span>
+                    {% if draft[7] > 0 %}
+                    <button type="button" class="btn btn-sm btn-outline-info ms-2" onclick="viewDraftPicks({{ draft[0] }})" data-bs-toggle="modal" data-bs-target="#draftPicksModal">
+                        View
+                    </button>
+                    {% endif %}
+                </td>
+                <td>{{ draft[2].strftime('%Y-%m-%d') }}</td>
+                <td>
+                    <a href="{{ url_for('mock_drafts.view_mock_draft', mock_id=draft[0]) }}" class="btn btn-success btn-sm">
+                        Manage
+                    </a>
+                    <button type="button" class="btn btn-warning btn-sm" onclick="editMockDraft({{ draft[0] }})" data-bs-toggle="modal" data-bs-target="#editMockDraftModal">
+                        Edit
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteMockDraftModal{{ draft[0] }}">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+
+            <!-- Delete Mock Draft Modal -->
+            <div class="modal fade" id="deleteMockDraftModal{{ draft[0] }}" tabindex="-1" aria-labelledby="deleteMockDraftModalLabel{{ draft[0] }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteMockDraftModalLabel{{ draft[0] }}">Delete Mock Draft</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to delete "{{ draft[1] }}"?
+                            {% if draft[7] > 0 %}
+                            <div class="alert alert-warning mt-2">
+                                <strong>Warning:</strong> This will also delete all {{ draft[7] }} pick(s) in this mock draft.
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="modal-footer">
+                            <form method="post" action="{{ url_for('mock_drafts.delete_mock_draft', mock_id=draft[0]) }}">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Add Mock Draft Modal -->
+<div class="modal fade" id="addMockDraftModal" tabindex="-1" aria-labelledby="addMockDraftModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addMockDraftModalLabel">Create New Mock Draft</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{{ url_for('mock_drafts.show_mock_drafts') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="mockName" class="form-label">Mock Draft Name</label>
+                        <input type="text" class="form-control" name="mock_name" required placeholder="e.g., 2025 WNBA Mock Draft v1">
+                    </div>
+                    <div class="mb-3">
+                        <label for="userId" class="form-label">Created By User</label>
+                        <select class="form-select" name="user_id" required>
+                            <option value="">Select User</option>
+                            {% for user in all_users %}
+                            <option value="{{ user[0] }}">{{ user[1] }} ({{ user[2] }}) - {{ user[3].title() }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Mock Draft</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Mock Draft Modal -->
+<div class="modal fade" id="editMockDraftModal" tabindex="-1" aria-labelledby="editMockDraftModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editMockDraftModalLabel">Edit Mock Draft</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" id="editMockDraftForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editMockName" class="form-label">Mock Draft Name</label>
+                        <input type="text" class="form-control" name="mock_name" id="editMockName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editUserId" class="form-label">Created By User</label>
+                        <select class="form-select" name="user_id" id="editUserId" required>
+                            <option value="">Select User</option>
+                            {% for user in all_users %}
+                            <option value="{{ user[0] }}">{{ user[1] }} ({{ user[2] }}) - {{ user[3].title() }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Draft Picks Preview Modal -->
+<div class="modal fade" id="draftPicksModal" tabindex="-1" aria-labelledby="draftPicksModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="draftPicksModalLabel">Draft Picks Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="draftPicksContent">
+                    <!-- Content will be loaded dynamically -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function editMockDraft(mockId) {
+    // Fetch mock draft details and populate the edit modal
+    fetch(`{{ url_for('mock_drafts.get_mock_draft_details', mock_id=0) }}`.replace('0', mockId))
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert('Error loading mock draft data');
+                return;
+            }
+            
+            // Populate form fields
+            document.getElementById('editMockName').value = data.mock_name || '';
+            document.getElementById('editUserId').value = data.user_id || '';
+            
+            // Set form action
+            document.getElementById('editMockDraftForm').action = `{{ url_for('mock_drafts.update_mock_draft', mock_id=0) }}`.replace('0', mockId);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error loading mock draft data');
+        });
+}
+
+function viewDraftPicks(mockId) {
+    // Fetch draft picks and display in modal
+    fetch(`{{ url_for('mock_drafts.get_mock_draft_picks', mock_id=0) }}`.replace('0', mockId))
+        .then(response => response.json())
+        .then(picks => {
+            let content = '<h6>Draft Picks:</h6>';
+            if (picks.length === 0) {
+                content += '<p class="text-muted">No picks in this mock draft yet.</p>';
+            } else {
+                content += '<div class="table-responsive"><table class="table table-sm table-striped">';
+                content += '<thead><tr><th>Round</th><th>Pick</th><th>Player</th><th>Position</th><th>Team</th></tr></thead><tbody>';
+                
+                picks.forEach(pick => {
+                    content += `
+                        <tr>
+                            <td>${pick.round}</td>
+                            <td>${pick.pick_number}</td>
+                            <td>${pick.player_name}</td>
+                            <td>${pick.position}</td>
+                            <td>${pick.team}</td>
+                        </tr>
+                    `;
+                });
+                content += '</tbody></table></div>';
+            }
+            
+            document.getElementById('draftPicksContent').innerHTML = content;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('draftPicksContent').innerHTML = '<p class="text-danger">Error loading draft picks.</p>';
+        });
+}
+</script>
+{% endblock %}

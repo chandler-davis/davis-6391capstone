@@ -1,6 +1,11 @@
 # Environment variables
 .env
 
+# Virtual Environment
+venv/
+.venv/
+env/
+
 # Python
 __pycache__/
 *.py[cod]
@@ -63,3 +68,6 @@ instance/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Claude Code
+.claude/settings.local.json

@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>WNBA Teams</h1>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTeamModal">
+        Add New Team
+    </button>
+
+    <!-- Eastern Conference Teams -->
+    <div class="mt-4">
+        <h3 class="text-primary">Eastern Conference</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Team ID</th>
+                    <th>Team Name</th>
+                    <th>City</th>
+                    <th>Players</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for team in all_teams %}
+                {% if team[3] == 'Eastern' %}
+                <tr>
+                    <td>{{ team[0] }}</td>
+                    <td>{{ team[1] }}</td>
+                    <td>{{ team[2] }}</td>
+                    <td>
+                        <span class="badge bg-info">{{ team[6] }} player(s)</span>
+                        {% if team[6] > 0 %}
+                        <button type="button" class="btn btn-sm btn-outline-info ms-2" onclick="viewTeamPlayers({{ team[0] }})" data-bs-toggle="modal" data-bs-target="#teamPlayersModal">
+                            View
+                        </button>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-warning btn-sm" onclick="editTeam({{ team[0] }})" data-bs-toggle="modal" data-bs-target="#editTeamModal">
+                            Edit
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteTeamModal{{ team[0] }}">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Delete Team Modal -->
+                <div class="modal fade" id="deleteTeamModal{{ team[0] }}" tabindex="-1" aria-labelledby="deleteTeamModalLabel{{ team[0] }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteTeamModalLabel{{ team[0] }}">Delete Team</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to delete the {{ team[2] }} {{ team[1] }}?
+                                {% if team[6] > 0 %}
+                                <div class="alert alert-warning mt-2">
+                                    <strong>Warning:</strong> This team has {{ team[6] }} player(s) assigned to it. You must reassign these players before deleting the team.
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="modal-footer">
+                                <form method="post" action="{{ url_for('teams.delete_team', team_id=team[0]) }}">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-danger" {% if team[6] > 0 %}disabled{% endif %}>Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Western Conference Teams -->
+    <div class="mt-4">
+        <h3 class="text-success">Western Conference</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Team ID</th>
+                    <th>Team Name</th>
+                    <th>City</th>
+                    <th>Players</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for team in all_teams %}
+                {% if team[3] == 'Western' %}
+                <tr>
+                    <td>{{ team[0] }}</td>
+                    <td>{{ team[1] }}</td>
+                    <td>{{ team[2] }}</td>
+                    <td>
+                        <span class="badge bg-info">{{ team[6] }} player(s)</span>
+                        {% if team[6] > 0 %}
+                        <button type="button" class="btn btn-sm btn-outline-info ms-2" onclick="viewTeamPlayers({{ team[0] }})" data-bs-toggle="modal" data-bs-target="#teamPlayersModal">
+                            View
+                        </button>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-warning btn-sm" onclick="editTeam({{ team[0] }})" data-bs-toggle="modal" data-bs-target="#editTeamModal">
+                            Edit
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteTeamModal{{ team[0] }}">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Delete Team Modal -->
+                <div class="modal fade" id="deleteTeamModal{{ team[0] }}" tabindex="-1" aria-labelledby="deleteTeamModalLabel{{ team[0] }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteTeamModalLabel{{ team[0] }}">Delete Team</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to delete the {{ team[2] }} {{ team[1] }}?
+                                {% if team[6] > 0 %}
+                                <div class="alert alert-warning mt-2">
+                                    <strong>Warning:</strong> This team has {{ team[6] }} player(s) assigned to it. You must reassign these players before deleting the team.
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="modal-footer">
+                                <form method="post" action="{{ url_for('teams.delete_team', team_id=team[0]) }}">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-danger" {% if team[6] > 0 %}disabled{% endif %}>Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Team Modal -->
+<div class="modal fade" id="addTeamModal" tabindex="-1" aria-labelledby="addTeamModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTeamModalLabel">Add New Team</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{{ url_for('teams.show_teams') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="teamName" class="form-label">Team Name</label>
+                        <input type="text" class="form-control" name="team_name" required placeholder="e.g., Liberty, Aces, Storm">
+                    </div>
+                    <div class="mb-3">
+                        <label for="city" class="form-label">City</label>
+                        <input type="text" class="form-control" name="city" required placeholder="e.g., New York, Las Vegas, Seattle">
+                    </div>
+                    <div class="mb-3">
+                        <label for="conference" class="form-label">Conference</label>
+                        <select class="form-select" name="conference" required>
+                            <option value="">Select Conference</option>
+                            <option value="Eastern">Eastern Conference</option>
+                            <option value="Western">Western Conference</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Team</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Team Modal -->
+<div class="modal fade" id="editTeamModal" tabindex="-1" aria-labelledby="editTeamModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editTeamModalLabel">Edit Team</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" id="editTeamForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editTeamName" class="form-label">Team Name</label>
+                        <input type="text" class="form-control" name="team_name" id="editTeamName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editCity" class="form-label">City</label>
+                        <input type="text" class="form-control" name="city" id="editCity" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editConference" class="form-label">Conference</label>
+                        <select class="form-select" name="conference" id="editConference" required>
+                            <option value="">Select Conference</option>
+                            <option value="Eastern">Eastern Conference</option>
+                            <option value="Western">Western Conference</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Team Players Modal -->
+<div class="modal fade" id="teamPlayersModal" tabindex="-1" aria-labelledby="teamPlayersModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="teamPlayersModalLabel">Team Players</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="teamPlayersContent">
+                    <!-- Content will be loaded dynamically -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function editTeam(teamId) {
+    // Fetch team details and populate the edit modal
+    fetch(`{{ url_for('teams.get_team_details', team_id=0) }}`.replace('0', teamId))
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert('Error loading team data');
+                return;
+            }
+            
+            // Populate form fields
+            document.getElementById('editTeamName').value = data.team_name || '';
+            document.getElementById('editCity').value = data.city || '';
+            document.getElementById('editConference').value = data.conference || '';
+            
+            // Set form action
+            document.getElementById('editTeamForm').action = `{{ url_for('teams.update_team', team_id=0) }}`.replace('0', teamId);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error loading team data');
+        });
+}
+
+function viewTeamPlayers(teamId) {
+    // Fetch team players and display in modal
+    fetch(`{{ url_for('teams.get_team_players', team_id=0) }}`.replace('0', teamId))
+        .then(response => response.json())
+        .then(players => {
+            let content = '<h6>Players on this team:</h6>';
+            if (players.length === 0) {
+                content += '<p class="text-muted">No players assigned to this team.</p>';
+            } else {
+                content += '<div class="list-group">';
+                players.forEach(player => {
+                    content += `
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">${player.first_name} ${player.last_name}</h6>
+                                <small class="text-muted">${player.position}</small>
+                            </div>
+                        </div>
+                    `;
+                });
+                content += '</div>';
+            }
+            
+            document.getElementById('teamPlayersContent').innerHTML = content;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('teamPlayersContent').innerHTML = '<p class="text-danger">Error loading team players.</p>';
+        });
+}
+</script>
+{% endblock %}

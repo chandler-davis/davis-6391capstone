@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>WNBA Draft Prospects</h1>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPlayerModal">
+        Add New Player
+    </button>
+
+    <!-- Table displaying all players -->
+    <table class="table table-striped mt-4">
+        <thead>
+            <tr>
+                <th>Player ID</th>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Height</th>
+                <th>School</th>
+                <th>Age</th>
+                <th>Current Team</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for player in all_players %}
+            <tr>
+                <td>{{ player[0] }}</td>
+                <td>{{ player[1] }} {{ player[2] }}</td>
+                <td>{{ player[3] }}</td>
+                <td>{{ player[4] or 'N/A' }}</td>
+                <td>{{ player[5] or 'N/A' }}</td>
+                <td>{{ player[6] or 'N/A' }}</td>
+                <td>
+                    {% if player[10] %}
+                        {{ player[10] }} ({{ player[11] }})
+                    {% else %}
+                        Draft Eligible
+                    {% endif %}
+                </td>
+                <td>
+                    <button type="button" class="btn btn-warning btn-sm" onclick="editPlayer({{ player[0] }})" data-bs-toggle="modal" data-bs-target="#editPlayerModal">
+                        Edit
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deletePlayerModal{{ player[0] }}">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+
+            <!-- Delete Player Modal -->
+            <div class="modal fade" id="deletePlayerModal{{ player[0] }}" tabindex="-1" aria-labelledby="deletePlayerModalLabel{{ player[0] }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deletePlayerModalLabel{{ player[0] }}">Delete Player</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to delete {{ player[1] }} {{ player[2] }}?
+                        </div>
+                        <div class="modal-footer">
+                            <form method="post" action="{{ url_for('players.delete_player', player_id=player[0]) }}">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Add Player Modal -->
+<div class="modal fade" id="addPlayerModal" tabindex="-1" aria-labelledby="addPlayerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addPlayerModalLabel">Add New Player</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{{ url_for('players.show_players') }}">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="firstName" class="form-label">First Name</label>
+                                <input type="text" class="form-control" name="first_name" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="lastName" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" name="last_name" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="position" class="form-label">Position</label>
+                                <select class="form-select" name="position" required>
+                                    <option value="">Select Position</option>
+                                    <option value="PG">Point Guard (PG)</option>
+                                    <option value="SG">Shooting Guard (SG)</option>
+                                    <option value="SF">Small Forward (SF)</option>
+                                    <option value="PF">Power Forward (PF)</option>
+                                    <option value="C">Center (C)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="height" class="form-label">Height</label>
+                                <input type="text" class="form-control" name="height" placeholder="e.g., 6'2&quot;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="school" class="form-label">School</label>
+                                <input type="text" class="form-control" name="school" placeholder="e.g., UConn">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="age" class="form-label">Age</label>
+                                <input type="number" class="form-control" name="age" min="18" max="30">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="primary_team_id" class="form-label">Current WNBA Team (if applicable)</label>
+                        <select class="form-select" name="primary_team_id">
+                            <option value="">Draft Eligible / No Team</option>
+                            {% for team in all_teams %}
+                            <option value="{{ team[0] }}">{{ team[1] }} ({{ team[2] }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Player</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Player Modal -->
+<div class="modal fade" id="editPlayerModal" tabindex="-1" aria-labelledby="editPlayerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editPlayerModalLabel">Edit Player</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" id="editPlayerForm">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editFirstName" class="form-label">First Name</label>
+                                <input type="text" class="form-control" name="first_name" id="editFirstName" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editLastName" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" name="last_name" id="editLastName" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editPosition" class="form-label">Position</label>
+                                <select class="form-select" name="position" id="editPosition" required>
+                                    <option value="">Select Position</option>
+                                    <option value="PG">Point Guard (PG)</option>
+                                    <option value="SG">Shooting Guard (SG)</option>
+                                    <option value="SF">Small Forward (SF)</option>
+                                    <option value="PF">Power Forward (PF)</option>
+                                    <option value="C">Center (C)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editHeight" class="form-label">Height</label>
+                                <input type="text" class="form-control" name="height" id="editHeight" placeholder="e.g., 6'2&quot;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editSchool" class="form-label">School</label>
+                                <input type="text" class="form-control" name="school" id="editSchool" placeholder="e.g., UConn">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editAge" class="form-label">Age</label>
+                                <input type="number" class="form-control" name="age" id="editAge" min="18" max="30">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPrimaryTeamId" class="form-label">Current WNBA Team (if applicable)</label>
+                        <select class="form-select" name="primary_team_id" id="editPrimaryTeamId">
+                            <option value="">Draft Eligible / No Team</option>
+                            {% for team in all_teams %}
+                            <option value="{{ team[0] }}">{{ team[1] }} ({{ team[2] }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function editPlayer(playerId) {
+    // Fetch player details and populate the edit modal
+    fetch(`{{ url_for('players.get_player_details', player_id=0) }}`.replace('0', playerId))
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert('Error loading player data');
+                return;
+            }
+            
+            // Populate form fields
+            document.getElementById('editFirstName').value = data.first_name || '';
+            document.getElementById('editLastName').value = data.last_name || '';
+            document.getElementById('editPosition').value = data.position || '';
+            document.getElementById('editHeight').value = data.height || '';
+            document.getElementById('editSchool').value = data.school || '';
+            document.getElementById('editAge').value = data.age || '';
+            document.getElementById('editPrimaryTeamId').value = data.primary_team_id || '';
+            
+            // Set form action
+            document.getElementById('editPlayerForm').action = `{{ url_for('players.update_player', player_id=0) }}`.replace('0', playerId);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error loading player data');
+        });
+}
+</script>
+{% endblock %}

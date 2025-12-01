@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>{{ mock_draft[1] }}</h1>
+            <p class="text-muted mb-0">
+                Created by: <strong>{{ mock_draft[4] }}</strong> ({{ mock_draft[6].title() }})
+                <br>
+                Created: {{ mock_draft[2].strftime('%B %d, %Y at %I:%M %p') }}
+            </p>
+        </div>
+        <div>
+            <a href="{{ url_for('mock_drafts.show_mock_drafts') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Mock Drafts
+            </a>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPickModal">
+                <i class="fas fa-plus"></i> Add Pick
+            </button>
+        </div>
+    </div>
+
+    {% if draft_picks %}
+    <!-- Round 1 Picks -->
+    <div class="mt-4">
+        <h3 class="text-primary">Round 1</h3>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Pick #</th>
+                        <th>Player</th>
+                        <th>Position</th>
+                        <th>Height</th>
+                        <th>School</th>
+                        <th>Drafted By</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pick in draft_picks %}
+                    {% if pick[1] == 1 %}
+                    <tr>
+                        <td><span class="badge bg-primary">{{ pick[2] }}</span></td>
+                        <td><strong>{{ pick[3] }} {{ pick[4] }}</strong></td>
+                        <td>{{ pick[5] }}</td>
+                        <td>{{ pick[6] or 'N/A' }}</td>
+                        <td>{{ pick[7] or 'N/A' }}</td>
+                        <td>{{ pick[8] }} ({{ pick[9] }})</td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deletePickModal{{ pick[0] }}">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Delete Pick Modal -->
+                    <div class="modal fade" id="deletePickModal{{ pick[0] }}" tabindex="-1" aria-labelledby="deletePickModalLabel{{ pick[0] }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deletePickModalLabel{{ pick[0] }}">Delete Pick</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete Pick #{{ pick[2] }}: {{ pick[3] }} {{ pick[4] }}?
+                                </div>
+                                <div class="modal-footer">
+                                    <form method="post" action="{{ url_for('mock_drafts.delete_pick', pick_id=pick[0], mock_id=mock_draft[0]) }}">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Round 2 Picks -->
+    {% set round2_picks = draft_picks | selectattr('1', 'equalto', 2) | list %}
+    {% if round2_picks %}
+    <div class="mt-4">
+        <h3 class="text-success">Round 2</h3>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Pick #</th>
+                        <th>Player</th>
+                        <th>Position</th>
+                        <th>Height</th>
+                        <th>School</th>
+                        <th>Drafted By</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pick in draft_picks %}
+                    {% if pick[1] == 2 %}
+                    <tr>
+                        <td><span class="badge bg-success">{{ pick[2] }}</span></td>
+                        <td><strong>{{ pick[3] }} {{ pick[4] }}</strong></td>
+                        <td>{{ pick[5] }}</td>
+                        <td>{{ pick[6] or 'N/A' }}</td>
+                        <td>{{ pick[7] or 'N/A' }}</td>
+                        <td>{{ pick[8] }} ({{ pick[9] }})</td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deletePickModal{{ pick[0] }}">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Delete Pick Modal -->
+                    <div class="modal fade" id="deletePickModal{{ pick[0] }}" tabindex="-1" aria-labelledby="deletePickModalLabel{{ pick[0] }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deletePickModalLabel{{ pick[0] }}">Delete Pick</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete Pick #{{ pick[2] }}: {{ pick[3] }} {{ pick[4] }}?
+                                </div>
+                                <div class="modal-footer">
+                                    <form method="post" action="{{ url_for('mock_drafts.delete_pick', pick_id=pick[0], mock_id=mock_draft[0]) }}">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Round 3 Picks -->
+    {% set round3_picks = draft_picks | selectattr('1', 'equalto', 3) | list %}
+    {% if round3_picks %}
+    <div class="mt-4">
+        <h3 class="text-warning">Round 3</h3>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Pick #</th>
+                        <th>Player</th>
+                        <th>Position</th>
+                        <th>Height</th>
+                        <th>School</th>
+                        <th>Drafted By</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pick in draft_picks %}
+                    {% if pick[1] == 3 %}
+                    <tr>
+                        <td><span class="badge bg-warning">{{ pick[2] }}</span></td>
+                        <td><strong>{{ pick[3] }} {{ pick[4] }}</strong></td>
+                        <td>{{ pick[5] }}</td>
+                        <td>{{ pick[6] or 'N/A' }}</td>
+                        <td>{{ pick[7] or 'N/A' }}</td>
+                        <td>{{ pick[8] }} ({{ pick[9] }})</td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deletePickModal{{ pick[0] }}">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Delete Pick Modal -->
+                    <div class="modal fade" id="deletePickModal{{ pick[0] }}" tabindex="-1" aria-labelledby="deletePickModalLabel{{ pick[0] }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deletePickModalLabel{{ pick[0] }}">Delete Pick</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete Pick #{{ pick[2] }}: {{ pick[3] }} {{ pick[4] }}?
+                                </div>
+                                <div class="modal-footer">
+                                    <form method="post" action="{{ url_for('mock_drafts.delete_pick', pick_id=pick[0], mock_id=mock_draft[0]) }}">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+    {% else %}
+    <!-- Empty State -->
+    <div class="text-center mt-5">
+        <div class="mb-4">
+            <i class="fas fa-basketball-ball fa-3x text-muted"></i>
+        </div>
+        <h3 class="text-muted">No picks in this mock draft yet</h3>
+        <p class="text-muted">Click "Add Pick" to start building your draft!</p>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPickModal">
+            <i class="fas fa-plus"></i> Add Your First Pick
+        </button>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Add Pick Modal -->
+<div class="modal fade" id="addPickModal" tabindex="-1" aria-labelledby="addPickModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addPickModalLabel">Add Draft Pick</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{{ url_for('mock_drafts.add_pick', mock_id=mock_draft[0]) }}">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="round" class="form-label">Round</label>
+                                <select class="form-select" name="round" required>
+                                    <option value="">Select Round</option>
+                                    <option value="1">Round 1</option>
+                                    <option value="2">Round 2</option>
+                                    <option value="3">Round 3</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="pick_number" class="form-label">Pick Number</label>
+                                <input type="number" class="form-control" name="pick_number" min="1" max="36" required placeholder="1-36">
+                                <small class="form-text text-muted">WNBA draft has 36 total picks (12 picks per round)</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="player_id" class="form-label">Player</label>
+                        <select class="form-select" name="player_id" required>
+                            <option value="">Select Player</option>
+                            {% for player in all_players %}
+                            <option value="{{ player[0] }}">{{ player[1] }} {{ player[2] }} - {{ player[3] }} ({{ player[4] or 'N/A' }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="target_team_id" class="form-label">Drafting Team</label>
+                        <select class="form-select" name="target_team_id" required>
+                            <option value="">Select Team</option>
+                            {% for team in all_teams %}
+                            <option value="{{ team[0] }}">{{ team[1] }} ({{ team[2] }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Pick</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

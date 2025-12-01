@@ -39,8 +39,14 @@
         </div>
         
         <div class="mt-4">
-            <a href="{{ url_for('examples.show_examples') }}" class="btn btn-primary btn-lg me-3">
-                <i class="fas fa-eye me-2"></i>View Examples
+            <a href="{{ url_for('players.show_players') }}" class="btn btn-primary btn-lg me-3">
+                <i class="fas fa-basketball me-2"></i>View Players
+            </a>
+            <a href="{{ url_for('teams.show_teams') }}" class="btn btn-success btn-lg me-3">
+                <i class="fas fa-users me-2"></i>View Teams
+            </a>
+            <a href="{{ url_for('mock_drafts.show_mock_drafts') }}" class="btn btn-info btn-lg me-3">
+                <i class="fas fa-clipboard-list me-2"></i>Mock Drafts
             </a>
             <a href="{{ url_for('about') }}" class="btn btn-outline-secondary btn-lg">
                 <i class="fas fa-info-circle me-2"></i>Learn More

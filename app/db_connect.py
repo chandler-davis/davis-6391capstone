@@ -15,8 +15,8 @@ def get_db():
                 host=os.getenv('DB_HOST'),
                 user=os.getenv('DB_USER'),
                 password=os.getenv('DB_PASSWORD'),
-                database=os.getenv('DB_NAME'),
-                cursorclass=pymysql.cursors.DictCursor  # Set the default cursor class to DictCursor
+                database=os.getenv('DB_NAME')
+                # Using default cursor which returns tuples for index access in templates
             )
         except Exception as e:
             print(f"Database connection failed: {e}")
