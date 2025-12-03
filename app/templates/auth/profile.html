@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white text-center">
+                <i class="fas fa-user-circle fa-3x mb-2"></i>
+                <h3 class="mb-0">Employee Profile</h3>
+            </div>
+            <div class="card-body p-4">
+                <div class="row">
+                    <div class="col-md-4 text-center mb-3">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user-circle fa-5x text-muted"></i>
+                        </div>
+                        <div class="mt-3">
+                            <span class="badge bg-{% if user[3] == 'admin' %}danger{% elif user[3] == 'scout' %}warning{% else %}secondary{% endif %} fs-6">
+                                {{ user[3].title() }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="profile-info">
+                            <div class="mb-3">
+                                <label class="form-label text-muted">
+                                    <i class="fas fa-user me-2"></i>Username
+                                </label>
+                                <div class="form-control-plaintext fw-bold">{{ user[1] }}</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label text-muted">
+                                    <i class="fas fa-envelope me-2"></i>Email
+                                </label>
+                                <div class="form-control-plaintext">{{ user[2] }}</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label text-muted">
+                                    <i class="fas fa-id-badge me-2"></i>Employee ID
+                                </label>
+                                <div class="form-control-plaintext">#{{ user[0] }}</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label text-muted">
+                                    <i class="fas fa-calendar-alt me-2"></i>Member Since
+                                </label>
+                                <div class="form-control-plaintext">{{ user[4].strftime('%B %d, %Y') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-light text-center">
+                <div class="btn-group" role="group">
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                        <i class="fas fa-home me-1"></i>Dashboard
+                    </a>
+                    {% if session.role in ['admin', 'scout'] %}
+                    <a href="{{ url_for('auth.list_users') }}" class="btn btn-info">
+                        <i class="fas fa-users me-1"></i>View Users
+                    </a>
+                    {% endif %}
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-danger">
+                        <i class="fas fa-sign-out-alt me-1"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Role Permissions Card -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-shield-alt me-2"></i>Your Permissions
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if user[3] == 'admin' %}
+                <div class="alert alert-danger">
+                    <h6><i class="fas fa-crown me-1"></i>Administrator Access</h6>
+                    <ul class="mb-0">
+                        <li>Full system access</li>
+                        <li>Manage all users and data</li>
+                        <li>Create, edit, and delete all content</li>
+                        <li>View system analytics</li>
+                    </ul>
+                </div>
+                {% elif user[3] == 'scout' %}
+                <div class="alert alert-warning">
+                    <h6><i class="fas fa-eye me-1"></i>Scout Access</h6>
+                    <ul class="mb-0">
+                        <li>Create and manage scouting reports</li>
+                        <li>Create mock drafts</li>
+                        <li>View all players and teams</li>
+                        <li>Access user directory</li>
+                    </ul>
+                </div>
+                {% else %}
+                <div class="alert alert-secondary">
+                    <h6><i class="fas fa-user me-1"></i>User Access</h6>
+                    <ul class="mb-0">
+                        <li>View players and teams</li>
+                        <li>View mock drafts</li>
+                        <li>Read-only access to reports</li>
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.profile-avatar {
+    position: relative;
+}
+
+.form-control-plaintext {
+    background-color: #f8f9fa;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    border: 1px solid #dee2e6;
+}
+
+.card-header {
+    background: linear-gradient(90deg, var(--gcsu-blue), var(--gcsu-green)) !important;
+    border: none;
+}
+
+.btn-group .btn {
+    border-radius: 0;
+}
+
+.btn-group .btn:first-child {
+    border-top-left-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
+}
+
+.btn-group .btn:last-child {
+    border-top-right-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,476 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+.stats-card {
+    border: 2px solid var(--basketball-orange);
+    border-radius: 15px;
+    background: linear-gradient(145deg, #ffffff 0%, #faf9f7 100%);
+    transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(255, 140, 0, 0.3);
+    border-color: var(--accent-gold);
+}
+
+.chart-container {
+    background: white;
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 2px solid var(--basketball-orange);
+    height: 350px; /* Fixed height for all charts */
+}
+
+.chart-wrapper {
+    position: relative;
+    height: 280px; /* Height for canvas containers */
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 900;
+    background: linear-gradient(45deg, var(--basketball-orange), var(--wnba-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-label {
+    color: var(--basketball-black);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.position-badge {
+    background: linear-gradient(45deg, var(--wnba-purple), var(--basketball-orange));
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.refresh-btn {
+    background: linear-gradient(45deg, var(--accent-gold), var(--basketball-orange));
+    border: none;
+    color: var(--basketball-black);
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.refresh-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+}
+
+.top-performer-item {
+    background: linear-gradient(135deg, rgba(255, 140, 0, 0.1), rgba(102, 51, 153, 0.1));
+    border-radius: 10px;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border-left: 4px solid var(--basketball-orange);
+    transition: all 0.3s ease;
+}
+
+.top-performer-item:hover {
+    background: linear-gradient(135deg, rgba(255, 140, 0, 0.2), rgba(102, 51, 153, 0.2));
+    transform: translateX(5px);
+}
+</style>
+
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 mb-3">
+            <i class="fas fa-chart-line text-primary me-3"></i>WNBA Draft Prospect Analytics
+        </h1>
+        <p class="lead text-muted">Comprehensive statistical analysis of 2025-26 season performance</p>
+        <button class="btn refresh-btn me-2" onclick="refreshAllData()">
+            <i class="fas fa-sync-alt me-2"></i>Refresh All Data
+        </button>
+        <span class="badge bg-success">Early Season • Dec 2025</span>
+    </div>
+
+    <!-- Summary Statistics Row -->
+    <div class="row mb-4">
+        {% if summary_stats %}
+        <div class="col-md-3 col-6 mb-3">
+            <div class="stats-card text-center p-4">
+                <div class="stat-number">{{ summary_stats[0] or 0 }}</div>
+                <div class="stat-label">Active Players</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+            <div class="stats-card text-center p-4">
+                <div class="stat-number">{{ "%.1f"|format(summary_stats[1] or 0) }}</div>
+                <div class="stat-label">Avg PPG</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+            <div class="stats-card text-center p-4">
+                <div class="stat-number">{{ "%.1f"|format((summary_stats[4] or 0) * 100) }}%</div>
+                <div class="stat-label">Avg FG%</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+            <div class="stats-card text-center p-4">
+                <div class="stat-number">{{ "%.1f"|format((summary_stats[5] or 0) * 100) }}%</div>
+                <div class="stat-label">Avg 3P%</div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <!-- PPG Chart -->
+        <div class="col-lg-6 mb-4">
+            <div class="chart-container">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0"><i class="fas fa-basketball-ball text-warning me-2"></i>Top Scorers (PPG)</h5>
+                    <button class="btn btn-sm btn-outline-primary" onclick="loadChart('ppg')">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="ppgChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- FG% Chart -->
+        <div class="col-lg-6 mb-4">
+            <div class="chart-container">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0"><i class="fas fa-target text-success me-2"></i>Field Goal Efficiency</h5>
+                    <button class="btn btn-sm btn-outline-primary" onclick="loadChart('fg_pct')">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="fgChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <!-- 3P% Chart -->
+        <div class="col-lg-6 mb-4">
+            <div class="chart-container">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0"><i class="fas fa-crosshairs text-info me-2"></i>Three-Point Accuracy</h5>
+                    <button class="btn btn-sm btn-outline-primary" onclick="loadChart('three_pt_pct')">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="threePtChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Position Breakdown -->
+        <div class="col-lg-6 mb-4">
+            <div class="chart-container">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0"><i class="fas fa-users text-purple me-2"></i>Position Breakdown</h5>
+                    <button class="btn btn-sm btn-outline-primary" onclick="loadChart('position')">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="positionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Performers Cards -->
+    <div class="row">
+        <div class="col-12">
+            <h3 class="mb-4">
+                <i class="fas fa-crown text-warning me-2"></i>2025-26 Season Leaders
+            </h3>
+        </div>
+    </div>
+
+    <div class="row" id="topPerformersRow">
+        <!-- Top performers will be loaded here -->
+        <div class="col-12 text-center">
+            <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
+            <p class="mt-2">Loading top performers...</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+let charts = {};
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Load all charts and top performers
+    loadChart('ppg');
+    loadChart('fg_pct'); 
+    loadChart('three_pt_pct');
+    loadChart('position');
+    loadTopPerformers();
+});
+
+function loadChart(chartType) {
+    fetch(`{{ url_for('stats.get_chart_data') }}?type=${chartType}`)
+        .then(response => response.json())
+        .then(data => {
+            if (chartType === 'position') {
+                createPositionChart(data);
+            } else {
+                createBarChart(chartType, data);
+            }
+        })
+        .catch(error => {
+            console.error(`Error loading ${chartType} chart:`, error);
+        });
+}
+
+function createBarChart(type, data) {
+    const canvasId = type === 'ppg' ? 'ppgChart' : type === 'fg_pct' ? 'fgChart' : 'threePtChart';
+    const ctx = document.getElementById(canvasId).getContext('2d');
+    
+    // Destroy existing chart
+    if (charts[type]) {
+        charts[type].destroy();
+    }
+    
+    const colors = [
+        '#FF8C00', '#663399', '#FFD700', '#FF6B35', '#8B4513',
+        '#FF4500', '#9370DB', '#FFA500', '#4169E1', '#32CD32'
+    ];
+    
+    charts[type] = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.map(item => item.name),
+            datasets: [{
+                label: type === 'ppg' ? 'Points Per Game' : type === 'fg_pct' ? 'Field Goal %' : 'Three Point %',
+                data: data.map(item => type.includes('pct') ? item.value * 100 : item.value),
+                backgroundColor: colors,
+                borderColor: colors.map(color => color + '80'),
+                borderWidth: 2,
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#FFD700',
+                    bodyColor: '#FFFFFF',
+                    callbacks: {
+                        afterLabel: function(context) {
+                            const playerData = data[context.dataIndex];
+                            return `Position: ${playerData.position}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return type.includes('pct') ? value + '%' : value;
+                        },
+                        maxTicksLimit: 6,
+                        font: {
+                            size: 11
+                        }
+                    }
+                },
+                x: {
+                    ticks: {
+                        maxRotation: 45,
+                        font: {
+                            size: 10
+                        }
+                    }
+                }
+            },
+            layout: {
+                padding: {
+                    top: 5,
+                    bottom: 5,
+                    left: 5,
+                    right: 5
+                }
+            }
+        }
+    });
+}
+
+function createPositionChart(data) {
+    const ctx = document.getElementById('positionChart').getContext('2d');
+    
+    if (charts.position) {
+        charts.position.destroy();
+    }
+    
+    charts.position = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: data.map(item => item.position),
+            datasets: [{
+                data: data.map(item => item.player_count),
+                backgroundColor: ['#FF8C00', '#663399', '#FFD700', '#FF6B35', '#8B4513'],
+                borderWidth: 3,
+                borderColor: '#FFFFFF'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#FFD700',
+                    bodyColor: '#FFFFFF',
+                    callbacks: {
+                        afterBody: function(context) {
+                            const item = data[context[0].dataIndex];
+                            return [
+                                `Avg PPG: ${item.avg_ppg.toFixed(1)}`,
+                                `Avg RPG: ${item.avg_rpg.toFixed(1)}`,
+                                `Avg APG: ${item.avg_apg.toFixed(1)}`
+                            ];
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function loadTopPerformers() {
+    fetch('{{ url_for("stats.get_top_performers") }}')
+        .then(response => response.json())
+        .then(data => {
+            const row = document.getElementById('topPerformersRow');
+            row.innerHTML = `
+                <div class="col-md-4 mb-3">
+                    <div class="stats-card p-4">
+                        <h6 class="text-warning mb-3"><i class="fas fa-basketball-ball me-2"></i>Top Scorers</h6>
+                        ${data.top_scorers.map((player, index) => `
+                            <div class="top-performer-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>${player.name}</strong><br>
+                                        <small class="text-muted">${player.school} • <span class="position-badge">${player.position}</span></small>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="h6 text-warning">${player.value}</span><br>
+                                        <small class="text-muted">PPG</small>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                    <div class="stats-card p-4">
+                        <h6 class="text-success mb-3"><i class="fas fa-target me-2"></i>Most Efficient</h6>
+                        ${data.efficient_shooters.map(player => `
+                            <div class="top-performer-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>${player.name}</strong><br>
+                                        <small class="text-muted">${player.school} • <span class="position-badge">${player.position}</span></small>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="h6 text-success">${player.value.toFixed(1)}%</span><br>
+                                        <small class="text-muted">FG%</small>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                    <div class="stats-card p-4">
+                        <h6 class="text-info mb-3"><i class="fas fa-crosshairs me-2"></i>3-Point Leaders</h6>
+                        ${data.three_point_leaders.map(player => `
+                            <div class="top-performer-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>${player.name}</strong><br>
+                                        <small class="text-muted">${player.school} • <span class="position-badge">${player.position}</span></small>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="h6 text-info">${player.value.toFixed(1)}%</span><br>
+                                        <small class="text-muted">3P%</small>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        })
+        .catch(error => {
+            console.error('Error loading top performers:', error);
+            document.getElementById('topPerformersRow').innerHTML = `
+                <div class="col-12">
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error loading top performers data.
+                    </div>
+                </div>
+            `;
+        });
+}
+
+function refreshAllData() {
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Refreshing...';
+    button.disabled = true;
+    
+    // Reload all charts and data
+    loadChart('ppg');
+    loadChart('fg_pct');
+    loadChart('three_pt_pct'); 
+    loadChart('position');
+    loadTopPerformers();
+    
+    setTimeout(() => {
+        button.innerHTML = originalText;
+        button.disabled = false;
+        
+        // Show success message
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-success alert-dismissible fade show position-fixed';
+        alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        alert.innerHTML = `
+            <i class="fas fa-check-circle me-2"></i>
+            Statistics refreshed successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(alert);
+        
+        setTimeout(() => alert.remove(), 3000);
+    }, 1000);
+}
+</script>
+{% endblock %}

@@ -1,14 +1,59 @@
 {% extends "base.html" %}
 
 {% block content %}
+<style>
+.player-link {
+    color: var(--basketball-orange);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.player-link:hover {
+    color: var(--accent-gold);
+    text-decoration: underline;
+    text-shadow: 1px 1px 2px rgba(255, 140, 0, 0.3);
+}
+
+.stat-item {
+    padding: 0.5rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    transition: transform 0.2s ease;
+}
+
+.stat-item:hover {
+    transform: scale(1.05);
+    background-color: rgba(255, 140, 0, 0.1);
+}
+
+.text-purple {
+    color: var(--wnba-purple) !important;
+}
+
+.text-orange {
+    color: var(--basketball-orange) !important;
+}
+
+.modal-content {
+    border: 2px solid var(--basketball-orange);
+    border-radius: 15px;
+}
+</style>
 <div class="container mt-4">
     <h1>WNBA Draft Prospects</h1>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPlayerModal">
-        Add New Player
-    </button>
+    <div class="mb-3">
+        <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#addPlayerModal">
+            <i class="fas fa-plus"></i> Add New Player
+        </button>
+        <button type="button" class="btn btn-info" onclick="updateAllToCurrent()" title="Update all players to current 2025-26 season information">
+            <i class="fas fa-sync-alt"></i> Update All to Current
+        </button>
+    </div>
 
     <!-- Table displaying all players -->
-    <table class="table table-striped mt-4">
+    <div class="table-responsive">
+        <table class="table table-striped mt-4">
         <thead>
             <tr>
                 <th>Player ID</th>
@@ -25,7 +70,11 @@
             {% for player in all_players %}
             <tr>
                 <td>{{ player[0] }}</td>
-                <td>{{ player[1] }} {{ player[2] }}</td>
+                <td>
+                    <a href="javascript:void(0)" onclick="showPlayerInfo({{ player[0] }})" class="player-link" title="Click to view detailed information">
+                        {{ player[1] }} {{ player[2] }}
+                    </a>
+                </td>
                 <td>{{ player[3] }}</td>
                 <td>{{ player[4] or 'N/A' }}</td>
                 <td>{{ player[5] or 'N/A' }}</td>
@@ -38,11 +87,14 @@
                     {% endif %}
                 </td>
                 <td>
-                    <button type="button" class="btn btn-warning btn-sm" onclick="editPlayer({{ player[0] }})" data-bs-toggle="modal" data-bs-target="#editPlayerModal">
-                        Edit
+                    <button type="button" class="btn btn-info btn-sm me-1" onclick="updateToCurrent({{ player[0] }}, '{{ player[1] }}', '{{ player[2] }}')" title="Update to current 2025-26 season info">
+                        <i class="fas fa-sync-alt"></i> Update
+                    </button>
+                    <button type="button" class="btn btn-warning btn-sm me-1" onclick="editPlayer({{ player[0] }})" data-bs-toggle="modal" data-bs-target="#editPlayerModal">
+                        <i class="fas fa-edit"></i> Edit
                     </button>
                     <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deletePlayerModal{{ player[0] }}">
-                        Delete
+                        <i class="fas fa-trash"></i> Delete
                     </button>
                 </td>
             </tr>
@@ -69,7 +121,8 @@
             </div>
             {% endfor %}
         </tbody>
-    </table>
+        </table>
+    </div>
 </div>
 
 <!-- Add Player Modal -->
@@ -228,6 +281,32 @@
     </div>
 </div>
 
+<!-- Player Information Modal -->
+<div class="modal fade" id="playerInfoModal" tabindex="-1" aria-labelledby="playerInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient" style="background: linear-gradient(135deg, var(--basketball-orange), var(--wnba-purple));">
+                <h5 class="modal-title text-white" id="playerInfoModalLabel">
+                    <i class="fas fa-basketball-ball me-2"></i>Player Information
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="playerInfoContent">
+                <div class="text-center">
+                    <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
+                    <p class="mt-2">Loading player information...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="editPlayerFromModal()" id="editFromModalBtn" style="display: none;">
+                    <i class="fas fa-edit"></i> Edit Player
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 function editPlayer(playerId) {
     // Fetch player details and populate the edit modal
@@ -255,6 +334,278 @@ function editPlayer(playerId) {
             console.error('Error:', error);
             alert('Error loading player data');
         });
+}
+
+function updateToCurrent(playerId, firstName, lastName) {
+    if (!confirm(`Update ${firstName} ${lastName} to current 2025-26 season information?`)) {
+        return;
+    }
+    
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+    button.disabled = true;
+    
+    fetch(`{{ url_for('players.update_to_current', player_id=0) }}`.replace('0', playerId), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message and reload page
+            alert(`✅ Successfully updated ${firstName} ${lastName} with current information!`);
+            location.reload();
+        } else {
+            alert(`❌ Error: ${data.message}`);
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('❌ Network error occurred');
+        button.innerHTML = originalText;
+        button.disabled = false;
+    });
+}
+
+function updateAllToCurrent() {
+    if (!confirm('Update ALL players to current 2025-26 season information? This will update schools, ages, heights, and positions for all players.')) {
+        return;
+    }
+    
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating All...';
+    button.disabled = true;
+    
+    fetch('{{ url_for("players.update_all_to_current") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(`✅ Successfully updated ${data.updated_count} players with current information!`);
+            location.reload();
+        } else {
+            alert(`❌ Error: ${data.message}`);
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('❌ Network error occurred');
+        button.innerHTML = originalText;
+        button.disabled = false;
+    });
+}
+
+let currentPlayerId = null;
+
+function showPlayerInfo(playerId) {
+    currentPlayerId = playerId;
+    const modal = new bootstrap.Modal(document.getElementById('playerInfoModal'));
+    
+    // Reset modal content
+    document.getElementById('playerInfoContent').innerHTML = `
+        <div class="text-center">
+            <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
+            <p class="mt-2">Loading player information...</p>
+        </div>
+    `;
+    document.getElementById('editFromModalBtn').style.display = 'none';
+    
+    modal.show();
+    
+    // Fetch detailed player information
+    fetch(`{{ url_for('players.get_player_info', player_id=0) }}`.replace('0', playerId))
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                document.getElementById('playerInfoContent').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error loading player information: ${data.error}
+                    </div>
+                `;
+                return;
+            }
+            
+            // Build player info HTML
+            const playerInfoHTML = buildPlayerInfoHTML(data);
+            document.getElementById('playerInfoContent').innerHTML = playerInfoHTML;
+            document.getElementById('editFromModalBtn').style.display = 'inline-block';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('playerInfoContent').innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Network error occurred while loading player information.
+                </div>
+            `;
+        });
+}
+
+function buildPlayerInfoHTML(data) {
+    return `
+        <div class="row">
+            <!-- Player Header -->
+            <div class="col-12 mb-4">
+                <div class="card border-0" style="background: linear-gradient(145deg, var(--basketball-orange), var(--wnba-purple)); color: white;">
+                    <div class="card-body text-center py-4">
+                        <i class="fas fa-basketball-ball fa-3x mb-3"></i>
+                        <h3 class="mb-1">${data.first_name} ${data.last_name}</h3>
+                        <h5 class="mb-0 opacity-90">${data.position} • ${data.school}</h5>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Basic Info -->
+            <div class="col-md-6 mb-3">
+                <div class="card h-100">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0"><i class="fas fa-user me-2"></i>Basic Information</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-2">
+                            <div class="col-6"><strong>Position:</strong></div>
+                            <div class="col-6">${data.position || 'N/A'}</div>
+                            <div class="col-6"><strong>Height:</strong></div>
+                            <div class="col-6">${data.height || 'N/A'}</div>
+                            <div class="col-6"><strong>Age:</strong></div>
+                            <div class="col-6">${data.age || 'N/A'}</div>
+                            <div class="col-6"><strong>School:</strong></div>
+                            <div class="col-6">${data.school || 'N/A'}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Current Team -->
+            <div class="col-md-6 mb-3">
+                <div class="card h-100">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0"><i class="fas fa-trophy me-2"></i>Professional Status</h6>
+                    </div>
+                    <div class="card-body">
+                        ${data.team_name ? `
+                            <div class="text-center">
+                                <i class="fas fa-basketball-ball fa-2x text-warning mb-2"></i>
+                                <h6>${data.team_name}</h6>
+                                <p class="text-muted mb-0">${data.city}</p>
+                            </div>
+                        ` : `
+                            <div class="text-center">
+                                <i class="fas fa-graduation-cap fa-2x text-primary mb-2"></i>
+                                <h6>Draft Eligible</h6>
+                                <p class="text-muted mb-0">College Prospect</p>
+                            </div>
+                        `}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stats Section -->
+            ${data.stats && data.stats.games_played > 0 ? `
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0"><i class="fas fa-chart-bar me-2"></i>2025-26 Season Statistics (Early Season)</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-2 col-4">
+                                    <div class="stat-item">
+                                        <h4 class="text-primary mb-0">${data.stats.games_played}</h4>
+                                        <small class="text-muted">Games</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-4">
+                                    <div class="stat-item">
+                                        <h4 class="text-warning mb-0">${data.stats.ppg}</h4>
+                                        <small class="text-muted">PPG</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-4">
+                                    <div class="stat-item">
+                                        <h4 class="text-success mb-0">${data.stats.rpg}</h4>
+                                        <small class="text-muted">RPG</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-4">
+                                    <div class="stat-item">
+                                        <h4 class="text-info mb-0">${data.stats.apg}</h4>
+                                        <small class="text-muted">APG</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-4">
+                                    <div class="stat-item">
+                                        <h4 class="text-purple mb-0">${(data.stats.fg_pct * 100).toFixed(1)}%</h4>
+                                        <small class="text-muted">FG%</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-4">
+                                    <div class="stat-item">
+                                        <h4 class="text-orange mb-0">${(data.stats.three_pt_pct * 100).toFixed(1)}%</h4>
+                                        <small class="text-muted">3P%</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-3">
+                                <small class="text-muted"><i class="fas fa-info-circle me-1"></i>Early season stats (December 2025)</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ` : data.stats && data.stats.games_played === 0 ? `
+                <div class="col-12">
+                    <div class="card border-warning">
+                        <div class="card-header bg-warning text-dark">
+                            <h6 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Player Status</h6>
+                        </div>
+                        <div class="card-body text-center">
+                            <i class="fas fa-medical fa-3x text-warning mb-3"></i>
+                            <h5 class="text-warning">OUT FOR SEASON</h5>
+                            <p class="text-muted mb-0">
+                                ${data.first_name === 'JuJu' ? 'Recovering from ACL injury sustained during 2025 NCAA Tournament' : 'Season-ending injury'}
+                            </p>
+                            <small class="text-muted">Expected to return for 2026-27 season</small>
+                        </div>
+                    </div>
+                </div>
+            ` : `
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-line fa-2x text-muted mb-3"></i>
+                            <p class="text-muted mb-0">No statistics available for this player</p>
+                        </div>
+                    </div>
+                </div>
+            `}
+        </div>
+    `;
+}
+
+function editPlayerFromModal() {
+    // Hide the info modal
+    const infoModal = bootstrap.Modal.getInstance(document.getElementById('playerInfoModal'));
+    infoModal.hide();
+    
+    // Open edit modal
+    setTimeout(() => {
+        editPlayer(currentPlayerId);
+        const editModal = new bootstrap.Modal(document.getElementById('editPlayerModal'));
+        editModal.show();
+    }, 300);
 }
 </script>
 {% endblock %}

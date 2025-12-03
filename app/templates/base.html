@@ -2,27 +2,46 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GCSU MIS Starter Kit</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --gcsu-blue: #003399;
-            --gcsu-green: #006633;
-            --gcsu-light-blue: #e6f2ff;
-            --gcsu-light-green: #e6f7e6;
+            --basketball-orange: #FF8C00;
+            --basketball-brown: #8B4513;
+            --basketball-black: #1a1a1a;
+            --basketball-white: #FFFFFF;
+            --court-wood: #DEB887;
+            --accent-gold: #FFD700;
+            --wnba-purple: #663399;
+            --wnba-orange: #FF6B35;
         }
         
         body {
-            background: linear-gradient(135deg, var(--gcsu-light-blue) 0%, #ffffff 50%, var(--gcsu-light-green) 100%);
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(255, 140, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(102, 51, 153, 0.1) 0%, transparent 50%),
+                linear-gradient(135deg, #f8f4e6 0%, #fff 50%, #f0f0f0 100%);
             min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Arial Black', 'Segoe UI', Arial, sans-serif;
+            background-attachment: fixed;
         }
         
         .navbar-gcsu {
-            background: linear-gradient(90deg, var(--gcsu-blue) 0%, var(--gcsu-green) 100%);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, var(--basketball-black) 0%, var(--wnba-purple) 50%, var(--basketball-orange) 100%);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             padding: 1rem 0;
+            border-bottom: 3px solid var(--accent-gold);
+        }
+        
+        .navbar-toggler {
+            border: 2px solid var(--accent-gold);
+            padding: 0.25rem 0.5rem;
+        }
+        
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23FFD700' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
         }
         
         .navbar-brand {
@@ -32,24 +51,28 @@
         }
         
         .navbar-brand:hover {
-            color: #f8f9fa !important;
-            transform: scale(1.05);
+            color: var(--accent-gold) !important;
+            transform: scale(1.05) rotate(5deg);
             transition: all 0.3s ease;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
         
         .navbar-nav .nav-link {
-            color: rgba(255, 255, 255, 0.9) !important;
-            font-weight: 500;
-            margin: 0 0.5rem;
+            color: rgba(255, 255, 255, 0.95) !important;
+            font-weight: 600;
+            margin: 0 0.3rem;
             padding: 0.5rem 1rem !important;
-            border-radius: 25px;
+            border-radius: 20px;
             transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .navbar-nav .nav-link:hover {
-            color: white !important;
-            background: rgba(255, 255, 255, 0.2);
+            color: var(--basketball-black) !important;
+            background: var(--accent-gold);
             transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 215, 0, 0.4);
         }
         
         .container {
@@ -63,70 +86,323 @@
         }
         
         .alert-danger {
-            background: linear-gradient(45deg, #dc3545, #c82333);
+            background: linear-gradient(45deg, #dc3545, var(--basketball-brown));
             color: white;
+            border: 2px solid var(--basketball-orange);
         }
         
         .alert-success {
-            background: linear-gradient(45deg, var(--gcsu-green), #28a745);
+            background: linear-gradient(45deg, var(--wnba-purple), var(--accent-gold));
             color: white;
+            border: 2px solid var(--basketball-orange);
         }
         
         .btn-primary {
-            background: linear-gradient(45deg, var(--gcsu-blue), var(--gcsu-green));
-            border: none;
+            background: linear-gradient(45deg, var(--basketball-orange), var(--wnba-purple));
+            border: 2px solid var(--accent-gold);
             border-radius: 25px;
-            padding: 0.5rem 1.5rem;
-            font-weight: 500;
+            padding: 0.6rem 1.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             transition: all 0.3s ease;
+            color: white;
         }
         
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 51, 153, 0.3);
+            background: linear-gradient(45deg, var(--accent-gold), var(--basketball-orange));
+            color: var(--basketball-black);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 6px 15px rgba(255, 140, 0, 0.4);
         }
         
         .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            border: 2px solid var(--basketball-orange);
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(255, 140, 0, 0.2);
+            transition: all 0.3s ease;
+            background: linear-gradient(145deg, #ffffff 0%, #faf9f7 100%);
         }
         
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px) rotate(1deg);
+            box-shadow: 0 12px 35px rgba(255, 140, 0, 0.3);
+            border-color: var(--accent-gold);
         }
         
         h1, h2, h3 {
-            color: var(--gcsu-blue);
+            color: var(--basketball-black);
+            text-shadow: 1px 1px 3px rgba(255, 140, 0, 0.3);
+            font-weight: 900;
         }
         
         .table {
-            border-radius: 10px;
+            border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            border: 2px solid var(--basketball-orange);
         }
         
         .table thead th {
-            background: linear-gradient(90deg, var(--gcsu-blue), var(--gcsu-green));
+            background: linear-gradient(135deg, var(--basketball-black) 0%, var(--wnba-purple) 50%, var(--basketball-orange) 100%);
             color: white;
             border: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .dropdown-menu {
+            border: 2px solid var(--basketball-orange);
+            box-shadow: 0 8px 25px rgba(255, 140, 0, 0.3);
+            border-radius: 15px;
+            background: linear-gradient(145deg, #ffffff 0%, #faf9f7 100%);
+        }
+        
+        .dropdown-item {
+            padding: 0.7rem 1.2rem;
+            transition: all 0.3s ease;
             font-weight: 600;
+        }
+        
+        .dropdown-item:hover {
+            background: linear-gradient(45deg, var(--basketball-orange), var(--accent-gold));
+            color: var(--basketball-black);
+            transform: translateX(8px);
+            border-radius: 10px;
+        }
+        
+        .badge {
+            font-size: 0.7em;
+            background: var(--accent-gold) !important;
+            color: var(--basketball-black) !important;
+            font-weight: 700;
+            border: 1px solid var(--basketball-orange);
+        }
+        
+        /* Basketball court pattern overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 100px,
+                    rgba(255, 140, 0, 0.03) 100px,
+                    rgba(255, 140, 0, 0.03) 102px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 100px,
+                    rgba(102, 51, 153, 0.03) 100px,
+                    rgba(102, 51, 153, 0.03) 102px
+                );
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Mobile Responsive Design */
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.1rem;
+            }
+            
+            .navbar-nav .nav-link {
+                font-size: 0.9rem;
+                margin: 0.2rem 0;
+                text-align: center;
+            }
+            
+            .container {
+                margin-top: 1rem;
+                padding: 0 1rem;
+            }
+            
+            .card {
+                margin-bottom: 1rem;
+            }
+            
+            .table-responsive {
+                font-size: 0.85rem;
+            }
+            
+            .btn {
+                font-size: 0.8rem;
+                padding: 0.4rem 1rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            h3 {
+                font-size: 1.1rem;
+            }
+            
+            .modal-dialog {
+                margin: 0.5rem;
+                max-width: calc(100% - 1rem);
+            }
+            
+            .dropdown-menu {
+                font-size: 0.9rem;
+            }
+            
+            .footer-basketball {
+                font-size: 0.85rem;
+            }
+            
+            .footer-basketball .col-lg-4,
+            .footer-basketball .col-lg-2,
+            .footer-basketball .col-lg-3 {
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        /* Tablet Responsive Design */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .container {
+                margin-top: 1.5rem;
+            }
+            
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+            
+            .navbar-nav .nav-link {
+                font-size: 0.95rem;
+            }
+            
+            .table-responsive {
+                font-size: 0.9rem;
+            }
+            
+            .modal-dialog {
+                max-width: 90%;
+            }
+        }
+
+        /* Touch-friendly enhancements */
+        @media (hover: none) {
+            .btn, .nav-link, .dropdown-item {
+                padding: 0.75rem 1.5rem;
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+            }
+            
+            .table td {
+                padding: 0.75rem;
+            }
+            
+            .card:hover {
+                transform: none;
+            }
+            
+            .navbar-nav .nav-link:hover {
+                transform: none;
+            }
+        }
+
+        /* Footer responsive styling */
+        .footer-basketball {
+            background: linear-gradient(135deg, var(--basketball-black) 0%, var(--wnba-purple) 50%, var(--basketball-orange) 100%);
+            color: white;
+            border-top: 3px solid var(--accent-gold);
+            margin-top: auto;
+        }
+        
+        .footer-title {
+            color: var(--accent-gold);
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-subtitle {
+            color: var(--accent-gold);
+            font-weight: bold;
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-text {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.5;
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent-gold);
+            transform: translateX(5px);
+        }
+        
+        .footer-university {
+            text-align: center;
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .footer-badges .badge {
+            background: var(--accent-gold) !important;
+            color: var(--basketball-black) !important;
+        }
+        
+        .bg-orange {
+            background-color: var(--basketball-orange) !important;
+        }
+        
+        .bg-purple {
+            background-color: var(--wnba-purple) !important;
         }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-gcsu">
-        <a class="navbar-brand" href="{{ url_for('index') }}">
-            <i class="fas fa-home me-2"></i>GCSU MIS Starter Kit
-        </a>
-        <div class="collapse navbar-collapse">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% if session.user_id %}{{ url_for('dashboard') }}{% else %}{{ url_for('index') }}{% endif %}">
+                <i class="fas fa-basketball-ball me-2"></i>WNBA Draft System
+            </a>
+            
+            <!-- Mobile toggle button -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('about') }}">
                         <i class="fas fa-info-circle me-1"></i>About
                     </a>
                 </li>
+                {% if session.user_id %}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('players.show_players') }}">
                         <i class="fas fa-basketball me-1"></i>Players
@@ -138,11 +414,61 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('stats.show_stats') }}">
+                        <i class="fas fa-chart-line me-1"></i>Stats
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('mock_drafts.show_mock_drafts') }}">
                         <i class="fas fa-clipboard-list me-1"></i>Mock Drafts
                     </a>
                 </li>
+                {% endif %}
             </ul>
+            
+            <!-- User Menu -->
+            <ul class="navbar-nav">
+                {% if session.user_id %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle me-1"></i>{{ session.username }}
+                        <span class="badge bg-light text-dark ms-1">{{ session.role.title() }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li>
+                            <a class="dropdown-item" href="{{ url_for('auth.profile') }}">
+                                <i class="fas fa-user me-2"></i>Profile
+                            </a>
+                        </li>
+                        {% if session.role in ['admin', 'scout'] %}
+                        <li>
+                            <a class="dropdown-item" href="{{ url_for('auth.list_users') }}">
+                                <i class="fas fa-users me-2"></i>Users
+                            </a>
+                        </li>
+                        {% endif %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.login') }}">
+                        <i class="fas fa-sign-in-alt me-1"></i>Login
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.register') }}">
+                        <i class="fas fa-user-plus me-1"></i>Register
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+            </div>
         </div>
     </nav>
 
@@ -162,8 +488,137 @@
         {% block content %}{% endblock %}
     </div>
 
+    <!-- Footer -->
+    <footer class="footer-basketball mt-5">
+        <div class="container">
+            <div class="row py-4">
+                <!-- Main Info -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <h5 class="footer-title">
+                        <i class="fas fa-basketball-ball me-2"></i>WNBA Draft System
+                    </h5>
+                    <p class="footer-text">
+                        Professional draft management platform for the Women's National Basketball Association. 
+                        Track prospects, analyze performance, and create comprehensive draft scenarios.
+                    </p>
+                    <div class="footer-stats">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar me-1"></i>2025-26 Season • 
+                            <i class="fas fa-users me-1"></i>Active Prospects • 
+                            <i class="fas fa-chart-line me-1"></i>Real-time Analytics
+                        </small>
+                    </div>
+                </div>
+                
+                <!-- Quick Links -->
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="footer-subtitle">Quick Links</h6>
+                    <ul class="footer-links">
+                        {% if session.user_id %}
+                        <li><a href="{{ url_for('players.show_players') }}"><i class="fas fa-basketball me-1"></i>Players</a></li>
+                        <li><a href="{{ url_for('teams.show_teams') }}"><i class="fas fa-users me-1"></i>Teams</a></li>
+                        <li><a href="{{ url_for('stats.show_stats') }}"><i class="fas fa-chart-line me-1"></i>Stats</a></li>
+                        <li><a href="{{ url_for('mock_drafts.show_mock_drafts') }}"><i class="fas fa-clipboard-list me-1"></i>Mock Drafts</a></li>
+                        {% else %}
+                        <li><a href="{{ url_for('auth.login') }}"><i class="fas fa-sign-in-alt me-1"></i>Login</a></li>
+                        <li><a href="{{ url_for('auth.register') }}"><i class="fas fa-user-plus me-1"></i>Register</a></li>
+                        {% endif %}
+                        <li><a href="{{ url_for('about') }}"><i class="fas fa-info-circle me-1"></i>About</a></li>
+                    </ul>
+                </div>
+                
+                <!-- User Tools -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h6 class="footer-subtitle">Features</h6>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-check-circle text-success me-1"></i>Player Analytics</li>
+                        <li><i class="fas fa-check-circle text-success me-1"></i>Team Management</li>
+                        <li><i class="fas fa-check-circle text-success me-1"></i>Draft Scenarios</li>
+                        <li><i class="fas fa-check-circle text-success me-1"></i>Performance Tracking</li>
+                        <li><i class="fas fa-check-circle text-success me-1"></i>Statistical Comparisons</li>
+                    </ul>
+                </div>
+                
+                <!-- Academic Info -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h6 class="footer-subtitle">Academic Partnership</h6>
+                    <div class="footer-university">
+                        <i class="fas fa-university fa-2x text-success mb-2"></i>
+                        <p class="mb-1"><strong>Georgia College & State University</strong></p>
+                        <p class="small text-muted mb-2">Management Information Systems</p>
+                        <p class="small text-muted">Milledgeville, Georgia</p>
+                    </div>
+                    {% if session.user_id %}
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            <i class="fas fa-user-circle me-1"></i>Logged in as: <strong>{{ session.username }}</strong>
+                            <span class="badge bg-secondary ms-1">{{ session.role.title() }}</span>
+                        </small>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Bottom Bar -->
+            <div class="footer-bottom">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <p class="mb-0 small">
+                            <i class="fas fa-copyright me-1"></i>2025 WNBA Draft Management System. 
+                            Built for educational purposes.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <div class="footer-badges">
+                            <span class="badge bg-orange me-1">
+                                <i class="fas fa-basketball-ball me-1"></i>WNBA 2026 Draft
+                            </span>
+                            <span class="badge bg-purple">
+                                <i class="fas fa-graduation-cap me-1"></i>GCSU MIS
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Prevent back button access after logout -->
+    <script>
+        // Prevent caching and back button access for protected pages
+        {% if session.user_id %}
+        // For logged-in users, disable browser caching
+        if (window.history && window.history.pushState) {
+            window.history.pushState('forward', null, null);
+            window.addEventListener('popstate', function() {
+                window.history.pushState('forward', null, null);
+            });
+        }
+        {% else %}
+        // For logged-out users, clear any cached data and prevent back navigation to protected pages
+        if (window.performance && window.performance.navigation.type === 2) {
+            // User came here via back button, redirect to login
+            window.location.replace('{{ url_for("index") }}');
+        }
+        {% endif %}
+        
+        // Clear sensitive data when page is about to unload
+        window.addEventListener('beforeunload', function() {
+            {% if not session.user_id %}
+            // Clear browser cache for security
+            if ('caches' in window) {
+                caches.keys().then(function(names) {
+                    names.forEach(function(name) {
+                        caches.delete(name);
+                    });
+                });
+            }
+            {% endif %}
+        });
+    </script>
 
     {% block scripts %}{% endblock %}
 </body>

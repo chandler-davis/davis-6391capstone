@@ -15,7 +15,10 @@
       "WebFetch(domain:www.brandcolorcode.com)",
       "Bash(git init:*)",
       "Bash(git remote add:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git reset:*)",
+      "Bash(git push:*)",
+      "Bash(FLASK_APP=app.py FLASK_ENV=development flask run --port=5001)"
     ],
     "deny": [],
     "ask": []

@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Welcome Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-gradient-primary text-white">
+                <div class="card-body text-center p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8 text-md-start text-center">
+                            <h2 class="mb-1">
+                                <i class="fas fa-tachometer-alt me-2"></i>
+                                Welcome to your Dashboard, {{ session.username }}!
+                            </h2>
+                            <p class="mb-0 opacity-75">WNBA Draft Management System</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <span class="badge bg-light text-dark fs-5 px-3 py-2">
+                                <i class="fas fa-{% if session.role == 'admin' %}crown{% elif session.role == 'scout' %}eye{% else %}user{% endif %} me-1"></i>
+                                {{ session.role.title() }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h4 class="mb-3"><i class="fas fa-bolt me-2"></i>Quick Actions</h4>
+            <div class="row">
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <a href="{{ url_for('players.show_players') }}" class="card h-100 text-decoration-none">
+                        <div class="card-body text-center">
+                            <i class="fas fa-basketball fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title text-dark">Players</h5>
+                            <p class="card-text text-muted">Manage draft prospects</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <a href="{{ url_for('teams.show_teams') }}" class="card h-100 text-decoration-none">
+                        <div class="card-body text-center">
+                            <i class="fas fa-users fa-3x text-success mb-3"></i>
+                            <h5 class="card-title text-dark">Teams</h5>
+                            <p class="card-text text-muted">WNBA team management</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <a href="{{ url_for('mock_drafts.show_mock_drafts') }}" class="card h-100 text-decoration-none">
+                        <div class="card-body text-center">
+                            <i class="fas fa-clipboard-list fa-3x text-info mb-3"></i>
+                            <h5 class="card-title text-dark">Mock Drafts</h5>
+                            <p class="card-text text-muted">Draft simulations</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <a href="{{ url_for('auth.profile') }}" class="card h-100 text-decoration-none">
+                        <div class="card-body text-center">
+                            <i class="fas fa-user-circle fa-3x text-warning mb-3"></i>
+                            <h5 class="card-title text-dark">Profile</h5>
+                            <p class="card-text text-muted">Your account info</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Content Based on Role -->
+    <div class="row">
+        {% if session.role == 'admin' %}
+        <!-- Admin Dashboard -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="fas fa-crown me-2"></i>Admin Controls</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ url_for('auth.list_users') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-users me-2"></i>Manage Users
+                            <small class="text-muted d-block">View and manage all system users</small>
+                        </a>
+                        <a href="{{ url_for('auth.register') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-user-plus me-2"></i>Add New User
+                            <small class="text-muted d-block">Register new employees</small>
+                        </a>
+                        <a href="{{ url_for('players.show_players') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-cog me-2"></i>System Management
+                            <small class="text-muted d-block">Full CRUD access to all data</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>System Overview</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <h4 class="text-primary">12</h4>
+                            <small class="text-muted">Teams</small>
+                        </div>
+                        <div class="col-4">
+                            <h4 class="text-success">50+</h4>
+                            <small class="text-muted">Players</small>
+                        </div>
+                        <div class="col-4">
+                            <h4 class="text-info">25+</h4>
+                            <small class="text-muted">Drafts</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% elif session.role == 'scout' %}
+        <!-- Scout Dashboard -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-eye me-2"></i>Scout Tools</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ url_for('players.show_players') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-plus me-2"></i>Add New Player
+                            <small class="text-muted d-block">Add prospects to database</small>
+                        </a>
+                        <a href="{{ url_for('mock_drafts.show_mock_drafts') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-clipboard me-2"></i>Create Mock Draft
+                            <small class="text-muted d-block">Build draft scenarios</small>
+                        </a>
+                        <a href="{{ url_for('auth.list_users') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-users me-2"></i>Scout Network
+                            <small class="text-muted d-block">Connect with other scouts</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-star me-2"></i>Your Contributions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <h4 class="text-warning">5</h4>
+                            <small class="text-muted">Reports</small>
+                        </div>
+                        <div class="col-4">
+                            <h4 class="text-info">3</h4>
+                            <small class="text-muted">Drafts</small>
+                        </div>
+                        <div class="col-4">
+                            <h4 class="text-success">12</h4>
+                            <small class="text-muted">Players</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% else %}
+        <!-- Regular User Dashboard -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-user me-2"></i>Your Access</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <a href="{{ url_for('players.show_players') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-eye me-2"></i>View Players
+                            <small class="text-muted d-block">Browse draft prospects</small>
+                        </a>
+                        <a href="{{ url_for('teams.show_teams') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-eye me-2"></i>View Teams
+                            <small class="text-muted d-block">Browse WNBA teams</small>
+                        </a>
+                        <a href="{{ url_for('mock_drafts.show_mock_drafts') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-eye me-2"></i>View Mock Drafts
+                            <small class="text-muted d-block">Browse draft scenarios</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Need More Access?</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        Contact your administrator to upgrade your account permissions:
+                    </p>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-arrow-right me-2 text-warning"></i><strong>Scout</strong> - Create reports & drafts</li>
+                        <li><i class="fas fa-arrow-right me-2 text-danger"></i><strong>Admin</strong> - Full system access</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Recent Activity (Future Enhancement) -->
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Recent Activity</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-clock fa-3x mb-3"></i>
+                        <p>Activity tracking coming soon...</p>
+                        <small>This section will show recent changes to players, teams, and drafts.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, var(--gcsu-blue) 0%, var(--gcsu-green) 100%) !important;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    transition: transform 0.3s ease;
+}
+
+.list-group-item-action:hover {
+    background-color: rgba(0, 51, 153, 0.05);
+    transform: translateX(5px);
+    transition: all 0.3s ease;
+}
+
+.card-header {
+    border-bottom: none;
+}
+
+.badge {
+    font-size: 0.9em;
+    padding: 0.5em 0.75em;
+}
+
+.text-decoration-none:hover {
+    text-decoration: none !important;
+}
+
+.card-body i.fa-3x {
+    transition: transform 0.3s ease;
+}
+
+.card:hover i.fa-3x {
+    transform: scale(1.1);
+}
+</style>
+{% endblock %}

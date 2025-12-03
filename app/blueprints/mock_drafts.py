@@ -1,9 +1,11 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from app.db_connect import get_db
+from app.blueprints.auth import login_required
 
 mock_drafts = Blueprint('mock_drafts', __name__)
 
 @mock_drafts.route('/', methods=['GET', 'POST'])
+@login_required
 def show_mock_drafts():
     db = get_db()
     cursor = db.cursor()
@@ -42,6 +44,7 @@ def show_mock_drafts():
     return render_template('mock_drafts.html', all_mock_drafts=all_mock_drafts, all_users=all_users)
 
 @mock_drafts.route('/view/<int:mock_id>')
+@login_required
 def view_mock_draft(mock_id):
     """View detailed mock draft with all picks"""
     db = get_db()
@@ -90,6 +93,7 @@ def view_mock_draft(mock_id):
                          all_teams=all_teams)
 
 @mock_drafts.route('/add_pick/<int:mock_id>', methods=['POST'])
+@login_required
 def add_pick(mock_id):
     """Add a pick to a mock draft"""
     db = get_db()
@@ -119,6 +123,7 @@ def add_pick(mock_id):
     return redirect(url_for('mock_drafts.view_mock_draft', mock_id=mock_id))
 
 @mock_drafts.route('/update_mock_draft/<int:mock_id>', methods=['POST'])
+@login_required
 def update_mock_draft(mock_id):
     db = get_db()
     cursor = db.cursor()
@@ -136,6 +141,7 @@ def update_mock_draft(mock_id):
     return redirect(url_for('mock_drafts.show_mock_drafts'))
 
 @mock_drafts.route('/delete_mock_draft/<int:mock_id>', methods=['POST'])
+@login_required
 def delete_mock_draft(mock_id):
     db = get_db()
     cursor = db.cursor()
@@ -151,6 +157,7 @@ def delete_mock_draft(mock_id):
     return redirect(url_for('mock_drafts.show_mock_drafts'))
 
 @mock_drafts.route('/delete_pick/<int:pick_id>/<int:mock_id>', methods=['POST'])
+@login_required
 def delete_pick(pick_id, mock_id):
     """Delete a specific pick from a mock draft"""
     db = get_db()
@@ -163,6 +170,7 @@ def delete_pick(pick_id, mock_id):
     return redirect(url_for('mock_drafts.view_mock_draft', mock_id=mock_id))
 
 @mock_drafts.route('/api/mock_draft/<int:mock_id>')
+@login_required
 def get_mock_draft_details(mock_id):
     """API endpoint to get mock draft details for edit modal"""
     db = get_db()
@@ -189,6 +197,7 @@ def get_mock_draft_details(mock_id):
         return jsonify({'error': 'Mock draft not found'}), 404
 
 @mock_drafts.route('/api/mock_draft/<int:mock_id>/picks')
+@login_required
 def get_mock_draft_picks(mock_id):
     """API endpoint to get picks for a mock draft"""
     db = get_db()

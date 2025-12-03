@@ -1,9 +1,11 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from app.db_connect import get_db
+from app.blueprints.auth import login_required
 
 teams = Blueprint('teams', __name__)
 
 @teams.route('/', methods=['GET', 'POST'])
+@login_required
 def show_teams():
     db = get_db()
     cursor = db.cursor()
@@ -37,6 +39,7 @@ def show_teams():
     return render_template('teams.html', all_teams=all_teams)
 
 @teams.route('/update_team/<int:team_id>', methods=['POST'])
+@login_required
 def update_team(team_id):
     db = get_db()
     cursor = db.cursor()
@@ -55,6 +58,7 @@ def update_team(team_id):
     return redirect(url_for('teams.show_teams'))
 
 @teams.route('/delete_team/<int:team_id>', methods=['POST'])
+@login_required
 def delete_team(team_id):
     db = get_db()
     cursor = db.cursor()
@@ -75,6 +79,7 @@ def delete_team(team_id):
     return redirect(url_for('teams.show_teams'))
 
 @teams.route('/api/team/<int:team_id>')
+@login_required
 def get_team_details(team_id):
     """API endpoint to get team details for edit modal"""
     db = get_db()
@@ -99,6 +104,7 @@ def get_team_details(team_id):
         return jsonify({'error': 'Team not found'}), 404
 
 @teams.route('/api/team/<int:team_id>/players')
+@login_required
 def get_team_players(team_id):
     """API endpoint to get players assigned to a team"""
     db = get_db()

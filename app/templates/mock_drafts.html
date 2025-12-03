@@ -8,7 +8,8 @@
     </button>
 
     <!-- Table displaying all mock drafts -->
-    <table class="table table-striped mt-4">
+    <div class="table-responsive">
+        <table class="table table-striped mt-4">
         <thead>
             <tr>
                 <th>Mock Draft ID</th>
@@ -16,7 +17,6 @@
                 <th>Created By</th>
                 <th>User Role</th>
                 <th>Picks</th>
-                <th>Created Date</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -42,7 +42,6 @@
                     </button>
                     {% endif %}
                 </td>
-                <td>{{ draft[2].strftime('%Y-%m-%d') }}</td>
                 <td>
                     <a href="{{ url_for('mock_drafts.view_mock_draft', mock_id=draft[0]) }}" class="btn btn-success btn-sm">
                         Manage
@@ -83,7 +82,8 @@
             </div>
             {% endfor %}
         </tbody>
-    </table>
+        </table>
+    </div>
 </div>
 
 <!-- Add Mock Draft Modal -->

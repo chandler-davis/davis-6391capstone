@@ -1,7 +1,278 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>About</h1>
-<br>
-<p>This website is designed to display example data tables using Pandas and Flask operations. Users can perform basic CRUD operations to add, manipulate, and sort records. A calculation of average points per player will also be available.</p>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Header Section -->
+            <div class="text-center mb-5">
+                <i class="fas fa-basketball-ball fa-4x text-primary mb-3"></i>
+                <h1 class="display-4 mb-3">About WNBA Draft System</h1>
+                <p class="lead text-muted">Professional draft management platform for the Women's National Basketball Association</p>
+            </div>
+
+            <!-- Mission Section -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-bullseye me-2"></i>Our Mission</h3>
+                </div>
+                <div class="card-body">
+                    <p class="lead">The WNBA Draft Management System is designed to streamline the professional basketball draft process, providing scouts, administrators, and analysts with comprehensive tools to evaluate prospects, manage team information, and create detailed draft scenarios.</p>
+                </div>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="row mb-4">
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100 border-primary">
+                        <div class="card-body text-center">
+                            <i class="fas fa-basketball fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title">Player Management</h5>
+                            <p class="card-text">Comprehensive prospect database with detailed statistics, physical measurements, and college performance data.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100 border-success">
+                        <div class="card-body text-center">
+                            <i class="fas fa-users fa-3x text-success mb-3"></i>
+                            <h5 class="card-title">Team Tracking</h5>
+                            <p class="card-text">Complete WNBA team roster management with conference organization and draft needs analysis.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100 border-info">
+                        <div class="card-body text-center">
+                            <i class="fas fa-clipboard-list fa-3x text-info mb-3"></i>
+                            <h5 class="card-title">Mock Drafts</h5>
+                            <p class="card-text">Create and share detailed draft scenarios with pick-by-pick analysis and team fit evaluations.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Roles Section -->
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h3 class="mb-0"><i class="fas fa-users-cog me-2"></i>User Roles & Access</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-3">
+                            <i class="fas fa-crown fa-2x text-danger mb-2"></i>
+                            <h5 class="text-danger">Administrators</h5>
+                            <ul class="list-unstyled">
+                                <li>Full system access</li>
+                                <li>User management</li>
+                                <li>Data oversight</li>
+                                <li>System configuration</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <i class="fas fa-eye fa-2x text-warning mb-2"></i>
+                            <h5 class="text-warning">Scouts</h5>
+                            <ul class="list-unstyled">
+                                <li>Player evaluation</li>
+                                <li>Scouting reports</li>
+                                <li>Mock draft creation</li>
+                                <li>Data contribution</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <i class="fas fa-user fa-2x text-secondary mb-2"></i>
+                            <h5 class="text-secondary">Members</h5>
+                            <ul class="list-unstyled">
+                                <li>View prospects</li>
+                                <li>Browse teams</li>
+                                <li>Access mock drafts</li>
+                                <li>Read-only access</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technology Stack -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h3 class="mb-0"><i class="fas fa-cogs me-2"></i>Technology Stack</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-server me-2"></i>Backend</h5>
+                            <ul>
+                                <li><strong>Python Flask</strong> - Web application framework</li>
+                                <li><strong>MySQL</strong> - Relational database management</li>
+                                <li><strong>PyMySQL</strong> - Database connectivity</li>
+                                <li><strong>Werkzeug</strong> - Security and authentication</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-desktop me-2"></i>Frontend</h5>
+                            <ul>
+                                <li><strong>Bootstrap 5</strong> - Responsive design framework</li>
+                                <li><strong>Font Awesome</strong> - Icon library</li>
+                                <li><strong>jQuery</strong> - JavaScript functionality</li>
+                                <li><strong>Jinja2</strong> - Template engine</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GCSU Information -->
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0"><i class="fas fa-graduation-cap me-2"></i>Academic Partnership</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h5>Georgia College & State University</h5>
+                            <p class="mb-2">This system was developed as part of the <strong>Management Information Systems (MIS)</strong> program at Georgia College & State University, located in Milledgeville, Georgia.</p>
+                            <p class="mb-0">The project demonstrates real-world application of web development technologies, database design, and user experience principles in a professional sports management context.</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fas fa-university fa-4x text-success"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: 3px solid var(--basketball-orange);
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(255, 140, 0, 0.2);
+    transition: all 0.4s ease;
+    background: linear-gradient(145deg, #ffffff 0%, #faf9f7 100%);
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, var(--basketball-orange), var(--accent-gold), var(--wnba-purple));
+    border-radius: 22px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.card:hover::before {
+    opacity: 1;
+}
+
+.card:hover {
+    transform: translateY(-10px) rotate(-1deg);
+    box-shadow: 0 15px 40px rgba(255, 140, 0, 0.4);
+}
+
+.card-header {
+    border: none;
+    border-radius: 20px 20px 0 0 !important;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.bg-primary {
+    background: linear-gradient(135deg, var(--basketball-orange), var(--wnba-purple)) !important;
+}
+
+.bg-secondary {
+    background: linear-gradient(135deg, var(--basketball-black), var(--basketball-brown)) !important;
+}
+
+.bg-info {
+    background: linear-gradient(135deg, var(--wnba-purple), var(--accent-gold)) !important;
+}
+
+.bg-success {
+    background: linear-gradient(135deg, var(--basketball-orange), var(--court-wood)) !important;
+}
+
+.border-primary {
+    border: 3px solid var(--basketball-orange) !important;
+    position: relative;
+}
+
+.border-success {
+    border: 3px solid var(--wnba-purple) !important;
+}
+
+.border-info {
+    border: 3px solid var(--accent-gold) !important;
+}
+
+.fa-4x, .fa-3x, .fa-2x {
+    transition: all 0.4s ease;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.card:hover .fa-4x {
+    transform: scale(1.2) rotate(15deg);
+    color: var(--basketball-orange);
+}
+
+.card:hover .fa-3x {
+    transform: scale(1.15) rotate(10deg);
+}
+
+.card:hover .fa-2x {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.text-primary {
+    color: var(--basketball-orange) !important;
+}
+
+.text-success {
+    color: var(--wnba-purple) !important;
+}
+
+.text-info {
+    color: var(--accent-gold) !important;
+}
+
+.text-danger {
+    color: var(--basketball-brown) !important;
+}
+
+.text-warning {
+    color: var(--basketball-orange) !important;
+}
+
+.text-secondary {
+    color: var(--basketball-black) !important;
+}
+
+/* Basketball texture overlay for feature cards */
+.card-body {
+    position: relative;
+}
+
+.card-body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 25% 25%, rgba(255, 140, 0, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(102, 51, 153, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    border-radius: 0 0 20px 20px;
+}
+</style>
 {% endblock %}

@@ -1,77 +1,148 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="row justify-content-center min-vh-100 align-items-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-gradient text-white text-center py-4">
+                <i class="fas fa-basketball-ball fa-3x mb-3"></i>
+                <h2 class="mb-1">WNBA Draft System</h2>
+                <p class="mb-0 opacity-75">Member Portal</p>
+            </div>
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <h4 class="text-muted mb-3">Welcome to the Draft Management System</h4>
+                    <p class="lead mb-4">
+                        Your comprehensive platform for managing WNBA draft prospects, teams, and mock draft scenarios.
+                    </p>
+                </div>
 
-<div class="text-center">
-    <div class="card shadow-lg p-5 mb-5">
-        <h1 class="display-4 mb-3">
-            <i class="fas fa-graduation-cap me-3"></i>Georgia College & State University
-        </h1>
-        <h2 class="h3 text-muted mb-4">MIS Flask Starter Kit</h2>
-        
-        <p class="lead mb-4">Welcome to GCSU's Flask development environment! This starter kit provides a foundation for building web applications using Python and Flask.</p>
-        
-        <div class="row justify-content-center mb-4">
-            <div class="col-md-10">
-                <p class="mb-0">Georgia College & State University, located in Milledgeville, Georgia, is a public liberal arts university known for its commitment to undergraduate education and student success. Our MIS program prepares students with practical skills in software development, data analysis, and modern web technologies for business applications.</p>
-            </div>
-        </div>
-        
-        <div class="row justify-content-center">
-            <div class="col-md-6 mb-3">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <i class="fas fa-code fa-3x mb-3" style="color: var(--gcsu-blue);"></i>
-                        <h5 class="card-title">Modern Development</h5>
-                        <p class="card-text">Built with Flask, Bootstrap, and modern web technologies for responsive design.</p>
+                <!-- Login Form -->
+                <form method="post" action="{{ url_for('auth.login') }}">
+                    <div class="mb-3">
+                        <label for="username" class="form-label fw-bold">
+                            <i class="fas fa-user me-2"></i>Username
+                        </label>
+                        <input type="text" class="form-control form-control-lg" name="username" id="username" required 
+                               placeholder="Enter your member username" value="admin123">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label fw-bold">
+                            <i class="fas fa-lock me-2"></i>Password
+                        </label>
+                        <input type="password" class="form-control form-control-lg" name="password" id="password" required 
+                               placeholder="Enter your password" value="scout123">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login to Dashboard
+                    </button>
+                </form>
+
+                <div class="text-center mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <hr class="flex-grow-1">
+                        <span class="mx-3 text-muted">or</span>
+                        <hr class="flex-grow-1">
+                    </div>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-outline-success">
+                        <i class="fas fa-user-plus me-2"></i>Create New Account
+                    </a>
+                </div>
+
+                <!-- Demo Credentials -->
+                <div class="alert alert-info">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Demo Credentials</strong>
+                    </div>
+                    <div class="text-center">
+                        <small>
+                            <strong>Demo Login:</strong><br>
+                            <code>admin123 / scout123</code>
+                        </small>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 mb-3">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <i class="fas fa-database fa-3x mb-3" style="color: var(--gcsu-green);"></i>
-                        <h5 class="card-title">Database Ready</h5>
-                        <p class="card-text">Pre-configured for MySQL/PostgreSQL with example CRUD operations.</p>
-                    </div>
-                </div>
+            
+            <!-- Footer -->
+            <div class="card-footer text-center bg-light">
+                <small class="text-muted">
+                    <i class="fas fa-graduation-cap me-1"></i>
+                    Georgia College & State University - MIS Program
+                </small>
             </div>
-        </div>
-        
-        <div class="mt-4">
-            <a href="{{ url_for('players.show_players') }}" class="btn btn-primary btn-lg me-3">
-                <i class="fas fa-basketball me-2"></i>View Players
-            </a>
-            <a href="{{ url_for('teams.show_teams') }}" class="btn btn-success btn-lg me-3">
-                <i class="fas fa-users me-2"></i>View Teams
-            </a>
-            <a href="{{ url_for('mock_drafts.show_mock_drafts') }}" class="btn btn-info btn-lg me-3">
-                <i class="fas fa-clipboard-list me-2"></i>Mock Drafts
-            </a>
-            <a href="{{ url_for('about') }}" class="btn btn-outline-secondary btn-lg">
-                <i class="fas fa-info-circle me-2"></i>Learn More
-            </a>
         </div>
     </div>
 </div>
 
 <style>
+    body {
+        background: linear-gradient(135deg, var(--gcsu-light-blue) 0%, #ffffff 50%, var(--gcsu-light-green) 100%);
+        min-height: 100vh;
+    }
+
+    .bg-gradient {
+        background: linear-gradient(135deg, var(--gcsu-blue) 0%, var(--gcsu-green) 100%);
+    }
+
     .card {
-        background: rgba(255, 255, 255, 0.95);
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
         backdrop-filter: blur(10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     }
     
-    .btn-outline-secondary {
-        border-color: var(--gcsu-blue);
-        color: var(--gcsu-blue);
+    .card-header {
+        border: none;
     }
-    
-    .btn-outline-secondary:hover {
-        background-color: var(--gcsu-blue);
+
+    .form-control-lg {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control-lg:focus {
         border-color: var(--gcsu-blue);
-        color: white;
+        box-shadow: 0 0 0 0.2rem rgba(0, 51, 153, 0.25);
+        transform: translateY(-1px);
+    }
+
+    .btn-lg {
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 51, 153, 0.3);
+        box-shadow: 0 8px 20px rgba(0, 51, 153, 0.3);
+    }
+
+    .btn-outline-success:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    }
+
+    .alert {
+        border: none;
+        border-radius: 10px;
+    }
+
+    code {
+        background-color: rgba(0, 51, 153, 0.1);
+        color: var(--gcsu-blue);
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+    }
+
+    .min-vh-100 {
+        min-height: 100vh;
     }
 </style>
 
