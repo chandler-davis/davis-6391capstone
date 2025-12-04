@@ -46,9 +46,6 @@
         <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#addPlayerModal">
             <i class="fas fa-plus"></i> Add New Player
         </button>
-        <button type="button" class="btn btn-info" onclick="updateAllToCurrent()" title="Update all players to current 2025-26 season information">
-            <i class="fas fa-sync-alt"></i> Update All to Current
-        </button>
     </div>
 
     <!-- Table displaying all players -->
@@ -87,9 +84,6 @@
                     {% endif %}
                 </td>
                 <td>
-                    <button type="button" class="btn btn-info btn-sm me-1" onclick="updateToCurrent({{ player[0] }}, '{{ player[1] }}', '{{ player[2] }}')" title="Update to current 2025-26 season info">
-                        <i class="fas fa-sync-alt"></i> Update
-                    </button>
                     <button type="button" class="btn btn-warning btn-sm me-1" onclick="editPlayer({{ player[0] }})" data-bs-toggle="modal" data-bs-target="#editPlayerModal">
                         <i class="fas fa-edit"></i> Edit
                     </button>
@@ -336,76 +330,6 @@ function editPlayer(playerId) {
         });
 }
 
-function updateToCurrent(playerId, firstName, lastName) {
-    if (!confirm(`Update ${firstName} ${lastName} to current 2025-26 season information?`)) {
-        return;
-    }
-    
-    const button = event.target;
-    const originalText = button.innerHTML;
-    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
-    button.disabled = true;
-    
-    fetch(`{{ url_for('players.update_to_current', player_id=0) }}`.replace('0', playerId), {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Show success message and reload page
-            alert(`✅ Successfully updated ${firstName} ${lastName} with current information!`);
-            location.reload();
-        } else {
-            alert(`❌ Error: ${data.message}`);
-            button.innerHTML = originalText;
-            button.disabled = false;
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('❌ Network error occurred');
-        button.innerHTML = originalText;
-        button.disabled = false;
-    });
-}
-
-function updateAllToCurrent() {
-    if (!confirm('Update ALL players to current 2025-26 season information? This will update schools, ages, heights, and positions for all players.')) {
-        return;
-    }
-    
-    const button = event.target;
-    const originalText = button.innerHTML;
-    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating All...';
-    button.disabled = true;
-    
-    fetch('{{ url_for("players.update_all_to_current") }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert(`✅ Successfully updated ${data.updated_count} players with current information!`);
-            location.reload();
-        } else {
-            alert(`❌ Error: ${data.message}`);
-            button.innerHTML = originalText;
-            button.disabled = false;
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('❌ Network error occurred');
-        button.innerHTML = originalText;
-        button.disabled = false;
-    });
-}
 
 let currentPlayerId = null;
 
