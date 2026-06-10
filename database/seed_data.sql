@@ -27,12 +27,12 @@ INSERT INTO teams (team_name, city, conference) VALUES
 -- Insert sample players
 INSERT INTO players (first_name, last_name, position, height, school, age, primary_team_id) VALUES
 ('Paige', 'Bueckers', 'PG', '6\'0\"', 'UConn', 22, NULL),
-('Kiki', 'Iriafen', 'F', '6\'3\"', 'USC', 21, NULL),
-('Madison', 'Booker', 'G', '5\'9\"', 'Texas', 22, NULL),
-('Te-Hina', 'Paopao', 'G', '5\'9\"', 'South Carolina', 22, NULL),
+('Kiki', 'Iriafen', 'PF', '6\'3\"', 'USC', 21, NULL),
+('Madison', 'Booker', 'SG', '5\'9\"', 'Texas', 22, NULL),
+('Te-Hina', 'Paopao', 'SG', '5\'9\"', 'South Carolina', 22, NULL),
 ('Dominique', 'Malonga', 'C', '6\'4\"', 'Syracuse', 23, NULL),
-('Azzi', 'Fudd', 'G', '5\'11\"', 'UConn', 21, NULL),
-('Aneesah', 'Morrow', 'F', '6\'1\"', 'LSU', 22, NULL),
+('Azzi', 'Fudd', 'SG', '5\'11\"', 'UConn', 21, NULL),
+('Aneesah', 'Morrow', 'PF', '6\'1\"', 'LSU', 22, NULL),
 ('Olivia', 'Miles', 'PG', '5\'10\"', 'Notre Dame', 21, NULL),
 ('Lauren', 'Betts', 'C', '6\'7\"', 'UCLA', 20, NULL),
 ('Georgia', 'Amoore', 'PG', '5\'6\"', 'Kentucky', 22, NULL);

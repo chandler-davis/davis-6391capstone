@@ -16,7 +16,7 @@ def show_stats():
         SELECT p.player_id, p.first_name, p.last_name, p.position, p.school, p.age,
                ps.games_played, ps.ppg, ps.rpg, ps.apg, ps.fg_pct, ps.three_pt_pct
         FROM players p
-        LEFT JOIN player_stats ps ON p.player_id = ps.player_id AND ps.season = '2025-26'
+        LEFT JOIN player_stats ps ON p.player_id = ps.player_id AND ps.season = '2024-25'
         ORDER BY ps.ppg DESC
     ''')
     
@@ -24,15 +24,15 @@ def show_stats():
     
     # Get summary statistics
     cursor.execute('''
-        SELECT 
+        SELECT
             COUNT(*) as total_players,
             AVG(ps.ppg) as avg_ppg,
-            AVG(ps.rpg) as avg_rpg, 
+            AVG(ps.rpg) as avg_rpg,
             AVG(ps.apg) as avg_apg,
             AVG(ps.fg_pct) as avg_fg_pct,
             AVG(ps.three_pt_pct) as avg_three_pt_pct
         FROM player_stats ps
-        WHERE ps.season = '2025-26' AND ps.games_played > 0
+        WHERE ps.season = '2024-25' AND ps.games_played > 0
     ''')
     
     summary_stats = cursor.fetchone()
@@ -55,7 +55,7 @@ def get_chart_data():
             SELECT p.first_name, p.last_name, ps.ppg, p.position
             FROM players p
             JOIN player_stats ps ON p.player_id = ps.player_id
-            WHERE ps.season = '2025-26' AND ps.games_played > 0
+            WHERE ps.season = '2024-25' AND ps.games_played > 0
             ORDER BY ps.ppg DESC
             LIMIT 10
         ''')
@@ -64,7 +64,7 @@ def get_chart_data():
             SELECT p.first_name, p.last_name, ps.fg_pct, p.position
             FROM players p
             JOIN player_stats ps ON p.player_id = ps.player_id
-            WHERE ps.season = '2025-26' AND ps.games_played > 5
+            WHERE ps.season = '2024-25' AND ps.games_played > 5
             ORDER BY ps.fg_pct DESC
             LIMIT 10
         ''')
@@ -73,19 +73,19 @@ def get_chart_data():
             SELECT p.first_name, p.last_name, ps.three_pt_pct, p.position
             FROM players p
             JOIN player_stats ps ON p.player_id = ps.player_id
-            WHERE ps.season = '2025-26' AND ps.games_played > 5
+            WHERE ps.season = '2024-25' AND ps.games_played > 5
             ORDER BY ps.three_pt_pct DESC
             LIMIT 10
         ''')
     elif chart_type == 'position':
         cursor.execute('''
-            SELECT p.position, 
+            SELECT p.position,
                    COUNT(*) as player_count,
                    AVG(ps.ppg) as avg_ppg,
                    AVG(ps.rpg) as avg_rpg,
                    AVG(ps.apg) as avg_apg
             FROM players p
-            LEFT JOIN player_stats ps ON p.player_id = ps.player_id AND ps.season = '2025-26'
+            LEFT JOIN player_stats ps ON p.player_id = ps.player_id AND ps.season = '2024-25'
             GROUP BY p.position
             ORDER BY p.position
         ''')
@@ -124,51 +124,51 @@ def get_top_performers():
         SELECT p.first_name, p.last_name, p.position, p.school, ps.ppg
         FROM players p
         JOIN player_stats ps ON p.player_id = ps.player_id
-        WHERE ps.season = '2025-26' AND ps.games_played > 0
+        WHERE ps.season = '2024-25' AND ps.games_played > 0
         ORDER BY ps.ppg DESC
         LIMIT 5
     ''')
     top_scorers = cursor.fetchall()
-    
+
     # Most efficient shooters (FG%)
     cursor.execute('''
         SELECT p.first_name, p.last_name, p.position, p.school, ps.fg_pct
         FROM players p
         JOIN player_stats ps ON p.player_id = ps.player_id
-        WHERE ps.season = '2025-26' AND ps.games_played > 5
+        WHERE ps.season = '2024-25' AND ps.games_played > 5
         ORDER BY ps.fg_pct DESC
         LIMIT 5
     ''')
     efficient_shooters = cursor.fetchall()
-    
+
     # Best 3-point shooters
     cursor.execute('''
         SELECT p.first_name, p.last_name, p.position, p.school, ps.three_pt_pct
         FROM players p
         JOIN player_stats ps ON p.player_id = ps.player_id
-        WHERE ps.season = '2025-26' AND ps.games_played > 5
+        WHERE ps.season = '2024-25' AND ps.games_played > 5
         ORDER BY ps.three_pt_pct DESC
         LIMIT 5
     ''')
     three_point_leaders = cursor.fetchall()
-    
+
     # Top rebounders
     cursor.execute('''
         SELECT p.first_name, p.last_name, p.position, p.school, ps.rpg
         FROM players p
         JOIN player_stats ps ON p.player_id = ps.player_id
-        WHERE ps.season = '2025-26' AND ps.games_played > 0
+        WHERE ps.season = '2024-25' AND ps.games_played > 0
         ORDER BY ps.rpg DESC
         LIMIT 5
     ''')
     top_rebounders = cursor.fetchall()
-    
+
     # Top assists
     cursor.execute('''
         SELECT p.first_name, p.last_name, p.position, p.school, ps.apg
         FROM players p
         JOIN player_stats ps ON p.player_id = ps.player_id
-        WHERE ps.season = '2025-26' AND ps.games_played > 0
+        WHERE ps.season = '2024-25' AND ps.games_played > 0
         ORDER BY ps.apg DESC
         LIMIT 5
     ''')
